@@ -5,7 +5,208 @@ use strict;
 use warnings;
 no  warnings 'syntax';
 
+use Hash::Util::FieldHash qw [fieldhash];
+use Games::Record::Constants;
+
 our $VERSION = '2015120801';
+
+fieldhash my %board;
+fieldhash my %x_size;
+fieldhash my %y_size;
+fieldhash my %nr_of_players;
+fieldhash my %current_player;
+fieldhash my %nr_of_pieces;
+fieldhash my %game_finished;   # False when progress, reason when finished.
+
+my $DEFAULT_NR_OF_PLAYERS  = 2;
+my $DEFAULT_CURRENT_PLAYER = 1;
+
+
+sub new  {bless \do {my $var} => shift};
+
+# -----------------------------------------------------------------------------
+# init
+#
+# Initialize the object. This is typically called by a SUPER:: from a
+# derived class. 
+#
+# Parameters:
+#    - x_size, y_size:  If both are given, create an empty board with
+#                       these dimensions. 
+#    - nr_of_players:   Set the number of players (default: 2).
+#    - current_player:  Set the current player, (default: 0).
+#    - nr_of_pieces:    Set the number of the game uses.
+#
+sub init {
+    my ($self, %args) = @_;
+
+    if ($args {x_size} && $args {y_size}) {
+        $self -> _create_board (x_size => $args {x_size},
+                                y_size => $args {y_size});
+    }
+
+    $nr_of_players  {$self} = $args {nr_of_players}  // $DEFAULT_NR_OF_PLAYERS;
+    $current_player {$self} = $args {current_player} // $DEFAULT_CURRENT_PLAYER;
+    $nr_of_pieces   {$self} = $args {nr_of_pieces} if
+                              $args {nr_of_pieces};
+    $game_finished  {$self} = $GAME_IN_PROGRESS;
+    $self;
+}
+
+
+# -----------------------------------------------------------------------------
+# _create_board
+#
+# Internal method which creates an empty board, and stores it.
+# The fields are initialized to 0.
+#
+# Parameters:
+#      x_size:   Size of board in X dimension.
+#      y_size:   Size of board in Y dimension.
+# 
+sub _create_board {
+    my ($self, %args) = @_;
+
+    my $board;
+    push @$board => [(0) x $args {x_size}] for 1 .. $args {y_size};
+
+    $board {$self}  = $board;
+    $x_size {$self} = $args {x_size};
+    $y_size {$self} = $args {y_size};
+    $self;
+}
+
+# -----------------------------------------------------------------------------
+# _place
+#
+# Place a piece of on the board, on given coordinates.
+# Note, this places the piece unconditionally; this is *not* the
+# same as doing a move. No validation, or after effects will happen.
+# Placing a 0 means clearing the field.
+#
+sub _place {
+    my ($self, %args) = @_;
+    my $x     = $args {x};
+    my $y     = $args {y};
+    my $piece = $args {piece};
+
+    die "Coordinates out of bounds\n" unless 
+         $x =~ /^[0-9]+$/ && $y =~ /^[0-9]+$/ &&
+         0 <= $x && $x < $self -> _x_size     &&
+         0 <= $y && $y < $self -> _y_size;
+
+    die "Invalid piece\n" unless
+         $piece =~ /^[0-9]$/ &&
+         0 <= $piece && $piece <= $self -> _nr_of_pieces;
+
+    $board {$self} [$x] [$y] = $piece;
+    $self;
+}
+
+
+################################################################################
+################################################################################
+##                                                                            ##
+## Accessors, not part of the public API; but subclases in this package       ##
+## are free to make use of it.                                                ##
+##                                                                            ##
+################################################################################
+################################################################################
+
+# -----------------------------------------------------------------------------
+# _board
+# 
+# Returns the stored board
+#
+sub _board {
+    my $self = shift;
+    $board {$self};
+}
+
+
+# -----------------------------------------------------------------------------
+# _x_size
+# 
+# Returns the size of the board, in the X dimension
+#
+sub _x_size {
+    my $self = shift;
+    $x_size {$self};
+}
+
+
+# -----------------------------------------------------------------------------
+# _y_size
+# 
+# Returns the size of the board, in the Y dimension
+#
+sub _y_size {
+    my $self = shift;
+    $y_size {$self};
+}
+
+# -----------------------------------------------------------------------------
+# _nr_of_players
+# 
+# Returns the number of players.
+#
+sub _nr_of_players {
+    my $self = shift;
+    $nr_of_players {$self};
+}
+
+# -----------------------------------------------------------------------------
+# _current_player
+# 
+# Returns the player whose move it currently is.
+#
+sub _current_player {
+    my $self = shift;
+    $current_player {$self};
+}
+
+# -----------------------------------------------------------------------------
+# _nr_of_pieces
+# 
+# Returns the number of *different* pieces this game uses, not the
+# total number of pieces which may appear on the board.
+#
+sub _nr_of_pieces {
+    my $self = shift;
+    $nr_of_pieces {$self};
+}
+
+# -----------------------------------------------------------------------------
+# _game_finished
+# 
+# Returns false if the game is still in progress; otherwise, the reason
+# why the game was finished.
+#
+sub _game_finished {
+    my $self = shift;
+    $game_finished {$self};
+}
+
+
+# -----------------------------------------------------------------------------
+# _piece
+# 
+# Returns the piece on the given x and y coordinates.
+#
+sub _piece {
+    my $self = shift;
+    my %args = @_;
+    my $x = $args {x} // die "Need an x coordinate";
+    my $y = $args {y} // die "Need a y coordinate";
+
+    die "Coordinates must be non-negative integers"
+         unless $x =~ /^[0-9]+$/ && $y =~ /^[0-9]+$/;
+
+    die "Coordinate out of bounds" if $x >= $x_size {$self} ||
+                                      $y >= $y_size {$self};
+
+    $board {$self} [$x] [$y];
+}
 
 
 1;
