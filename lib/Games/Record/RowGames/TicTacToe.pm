@@ -100,7 +100,7 @@ sub check_finished {
     }
 
     if ($state == $GAME_DECIDED) {
-        $self -> _set_game_finished ($GAME_DECIDED);
+        $self -> _set_game_finished (state => $GAME_DECIDED);
         #
         # Piece player uses has the same index
         #
@@ -119,7 +119,7 @@ sub check_finished {
         }
     }
 
-    $self -> _set_game_finished ($GAME_DRAWN);
+    $self -> _set_game_finished (state => $GAME_DRAWN);
     $self -> _set_winner (0);
     return $GAME_DRAWN;
 }

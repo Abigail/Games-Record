@@ -17,7 +17,9 @@ our @EXPORT = qw [$GAME_IN_PROGRESS
                   $GAME_RESIGNED
                   $GAME_TIMED_OUT
                   $GAME_DRAW_AGREED
-                  $GAME_TECHNICAL_DRAW];
+                  $GAME_TECHNICAL_DRAW
+                  $GAME_STATE_MAX
+];
 
 
 #
@@ -31,6 +33,8 @@ our $GAME_RESIGNED          =  3;   # A player resigned.
 our $GAME_TIMED_OUT         =  4;   # Game timed out.
 our $GAME_DRAW_AGREED       =  5;   # Players agreed to draw.
 our $GAME_TECHNICAL_DRAW    =  6;   # Mechanism to prevent the game carrying on.
+
+our $GAME_STATE_MAX         =  6;   # Up when there are more states.
 
 
 1;

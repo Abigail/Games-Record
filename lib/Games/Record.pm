@@ -189,6 +189,28 @@ sub _game_finished {
 
 
 # -----------------------------------------------------------------------------
+# _set_game_finished
+# 
+# Sets the finished state of a game.
+#
+# Parameters:
+#     state
+#
+sub _set_game_finished {
+    my $self  = shift;
+    my %args  = @_;
+    my $state = $args {state} // die "No state given";
+
+    die "Illegal state '$state'"
+         unless $state =~ /^[0-9]+$/ && $state <= $GAME_STATE_MAX;
+
+    $game_finished {$self} = $state;
+
+    $self;
+}
+
+
+# -----------------------------------------------------------------------------
 # _piece
 # 
 # Returns the piece on the given x and y coordinates.
@@ -198,7 +220,7 @@ sub _piece {
     my %args = @_;
     my $x = $args {x} // die "Need an x coordinate";
     my $y = $args {y} // die "Need a y coordinate";
-
+ 
     die "Coordinates must be non-negative integers"
          unless $x =~ /^[0-9]+$/ && $y =~ /^[0-9]+$/;
 
