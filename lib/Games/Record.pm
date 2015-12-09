@@ -17,6 +17,8 @@ fieldhash my %nr_of_players;
 fieldhash my %current_player;
 fieldhash my %nr_of_pieces;
 fieldhash my %game_finished;   # False when progress, reason when finished.
+fieldhash my %winner;          # Winner of the game (undef: game in progress,
+                               #                     0: draw)
 
 my $DEFAULT_NR_OF_PLAYERS  = 2;
 my $DEFAULT_CURRENT_PLAYER = 1;
@@ -229,6 +231,41 @@ sub _piece {
 
     $board {$self} [$x] [$y];
 }
+
+
+
+# -----------------------------------------------------------------------------
+# _winner
+# 
+# Returns the winner of the game.
+#
+sub _winner {
+    my $self = shift;
+    $winner {$self};
+}
+
+
+# -----------------------------------------------------------------------------
+# _set_winner
+# 
+# Sets the winner of the game. Must be 0 (no winner) or one of the players.
+#
+# Parameters:
+#     winner
+#
+sub _set_winner {
+    my $self   = shift;
+    my %args   = @_;
+    my $winner = $args {winner} // die "No winner given";
+
+    die "Illegal winner '$winner'"
+         unless $winner =~ /^[0-9]+$/ && $winner <= $nr_of_players {$self};
+
+    $winner {$self} = $winner;
+
+    $self;
+}
+
 
 
 1;

@@ -104,7 +104,7 @@ sub check_finished {
         #
         # Piece player uses has the same index
         #
-        $self -> _set_winner ($winning_piece);
+        $self -> _set_winner (winner => $winning_piece);
 
         return $GAME_DECIDED;
     }
@@ -119,8 +119,8 @@ sub check_finished {
         }
     }
 
-    $self -> _set_game_finished (state => $GAME_DRAWN);
-    $self -> _set_winner (0);
+    $self -> _set_game_finished (state  => $GAME_DRAWN);
+    $self -> _set_winner        (winner => 0);
     return $GAME_DRAWN;
 }
 
