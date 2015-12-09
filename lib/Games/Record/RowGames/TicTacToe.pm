@@ -91,7 +91,7 @@ sub check_finished {
                 $x ++;
                 $y --;
                 my $piece = $self -> _piece (x => $x, y => $y);
-                next DIAGONAL_XY unless $piece0 == $piece;
+                next DIAGONAL_YX unless $piece0 == $piece;
             }
             $state = $GAME_DECIDED;
             $winning_piece = $piece0;
@@ -115,7 +115,7 @@ sub check_finished {
     for (my $x = 0; $x < $self -> _x_size; $x ++) {
         for (my $y = 0; $y < $self -> _y_size; $y ++) {
             my $piece = $self -> _piece (x => $x, y => $y);
-            return $GAME_IN_PROGRESS if $piece;
+            return $GAME_IN_PROGRESS unless $piece;
         }
     }
 
