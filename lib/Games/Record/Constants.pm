@@ -37,6 +37,29 @@ our $GAME_TECHNICAL_DRAW    =  6;   # Mechanism to prevent the game carrying on.
 our $GAME_STATE_MAX         =  6;   # Up when there are more states.
 
 
+my %sets = (
+    #
+    # Reasons a move cannot be played
+    #
+    MOVE_FAILURES  => [qw [
+        FAILED_TO_PARSE_MOVE
+        GAME_FINISHED
+        DROP_FIELD_DOES_NOT_EXIST
+        SOURCE_FIELD_DOES_NOT_EXIST
+        TARGET_FIELD_DOES_NOT_EXIST
+        NOT_PLAYERS_TURN
+    ]],
+);
+foreach my $set (values %sets) {
+    for (my $i = 0; $i < @$set; $i ++) {
+        my $name = $$set [$i];
+        no strict 'refs';
+        ${__PACKAGE__ . "::${name}"} = $i + 1;
+        push @EXPORT => "\$${name}";
+    }
+}
+
+
 1;
 
 __END__
