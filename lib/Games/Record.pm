@@ -106,6 +106,36 @@ sub _place {
 }
 
 
+
+# -----------------------------------------------------------------------------
+# _is_valid_move
+#
+# Tests whether a move is valid. Does not play the move. This is called
+# after parsing a move, so we assume the move is in a generic format.
+#
+# Is often overriden in by a subclass.
+#
+sub _is_valid_move {
+    my ($self, %args) = @_;
+
+    ...;
+}
+
+
+
+# -----------------------------------------------------------------------------
+# move
+#
+# Plays a move. Returns true if the move can be played. Returns false if
+# a move cannot be played. If not, sets an error condition.
+#
+sub move {
+    my ($self, %args) = @_;
+
+    ...;
+}
+
+
 ################################################################################
 ################################################################################
 ##                                                                            ##
