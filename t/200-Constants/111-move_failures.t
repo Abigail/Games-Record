@@ -10,18 +10,16 @@ use Test::More 0.88;
 
 our $r = eval "require Test::NoWarnings; 1";
 
-BEGIN {
-    use_ok ('Games::Record::Constants') or
-        BAIL_OUT ("Loading of 'Games::Record::Constants' failed");
-}
+use Games::Record::Constants qw [:MOVE_ERRORS];
 
 
-ok defined $FAILED_TO_PARSE_MOVE,         '$FAILED_TO_PARSE_MOVE';
-ok defined $GAME_FINISHED,                '$GAME_FINISHED';
-ok defined $DROP_FIELD_DOES_NOT_EXIST,    '$DROP_FIELD_DOES_NOT_EXIST';
-ok defined $SOURCE_FIELD_DOES_NOT_EXIST,  '$SOURCE_FIELD_DOES_NOT_EXIST';
-ok defined $TARGET_FIELD_DOES_NOT_EXIST,  '$TARGET_FIELD_DOES_NOT_EXIST';
-ok defined $NOT_PLAYERS_TURN,             '$NOT_PLAYERS_TURN';
+my $i = 0;
+is $MOVE_ERROR_MOVE_ACCEPTED,        $i ++, '$MOVE_ERROR_MOVE_ACCEPTED';
+is $MOVE_ERROR_FAILED_TO_PARSE,      $i ++, '$MOVE_ERROR_FAILED_TO_PARSE';
+is $MOVE_ERROR_GAME_FINISHED,        $i ++, '$MOVE_ERROR_GAME_FINISHED';
+is $MOVE_ERROR_FIELD_DOES_NOT_EXIST, $i ++, '$MOVE_ERROR_FIELD_DOES_NOT_EXIST';
+is $MOVE_ERROR_NOT_PLAYERS_TURN,     $i ++, '$MOVE_ERROR_NOT_PLAYERS_TURN';
+is $MOVE_ERROR_MAX,                  $i ++, '$MOVE_ERROR_MAX';
 
 
 Test::NoWarnings::had_no_warnings () if $r;

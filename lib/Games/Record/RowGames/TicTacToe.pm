@@ -8,7 +8,7 @@ no  warnings 'syntax';
 
 use Hash::Util::FieldHash qw [fieldhash];
 
-use Games::Record::Constants;
+use Games::Record::Constants qw [:ALL];
 use Games::Record::RowGames;
 
 our @ISA = qw [Games::Record::RowGames];

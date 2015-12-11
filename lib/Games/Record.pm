@@ -6,7 +6,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Hash::Util::FieldHash qw [fieldhash];
-use Games::Record::Constants;
+use Games::Record::Constants qw [:ALL];
 
 our $VERSION = '2015120801';
 
@@ -234,7 +234,7 @@ sub _set_game_finished {
     my $state = $args {state} // die "No state given";
 
     die "Illegal state '$state'"
-         unless $state =~ /^[0-9]+$/ && $state <= $GAME_STATE_MAX;
+         unless $state =~ /^[0-9]+$/ && $state < $GAME_STATE_MAX;
 
     $game_finished {$self} = $state;
 

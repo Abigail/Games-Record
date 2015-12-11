@@ -13,7 +13,7 @@ our $r = eval "require Test::NoWarnings; 1";
 BEGIN {
     use_ok ('Games::Record::RowGames::TicTacToe') or
         BAIL_OUT ("Loading of 'Games::Record::RowGames::TicTacToe' failed");
-    use_ok ('Games::Record::Constants') or
+    use_ok ('Games::Record::Constants', ':ALL') or
         BAIL_OUT ("Loading of 'Games::Record::Constants' failed");
 }
 

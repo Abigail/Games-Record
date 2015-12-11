@@ -11,53 +11,56 @@ our $VERSION = '2015120801';
 use Exporter ();
 
 our @ISA    = qw [Exporter];
-our @EXPORT = qw [$GAME_IN_PROGRESS 
-                  $GAME_DECIDED
-                  $GAME_DRAWN
-                  $GAME_RESIGNED
-                  $GAME_TIMED_OUT
-                  $GAME_DRAW_AGREED
-                  $GAME_TECHNICAL_DRAW
-                  $GAME_STATE_MAX
-];
-
-
-#
-# Reasons why a game was finished
-#
-our $GAME_IN_PROGRESS       =  0;   # Not finished.
-our $GAME_DECIDED           =  1;   # A deciding move was played.
-our $GAME_DRAWN             =  2;   # No move left, or other position which
-                                    # is a draw.
-our $GAME_RESIGNED          =  3;   # A player resigned.
-our $GAME_TIMED_OUT         =  4;   # Game timed out.
-our $GAME_DRAW_AGREED       =  5;   # Players agreed to draw.
-our $GAME_TECHNICAL_DRAW    =  6;   # Mechanism to prevent the game carrying on.
-
-our $GAME_STATE_MAX         =  6;   # Up when there are more states.
+our %EXPORT_TAGS;
 
 
 my %sets = (
     #
+    # Reasons why a game was finished
+    #
+    GAME_STATE => {
+        prefix => "GAME_" ,
+        data   => <<"        --",
+            IN_PROGRESS      #  Not finished
+            DECIDED          #  A deciding move was played.
+            DRAWN            #  Position is a draw.
+            RESIGNED         #  A player resigned.
+            TIMED_OUT        #  The game timed out for a player.
+            DRAW_AGREED      #  Players agreed on a draw.
+            TECHNICAL_DRAW   #  Repeated positions, too many moves, etc.
+            STATE_MAX        #  One more than the max allowed value.
+        --
+    },
+
+    #
     # Reasons a move cannot be played
     #
-    MOVE_FAILURES  => [qw [
-        FAILED_TO_PARSE_MOVE
-        GAME_FINISHED
-        DROP_FIELD_DOES_NOT_EXIST
-        SOURCE_FIELD_DOES_NOT_EXIST
-        TARGET_FIELD_DOES_NOT_EXIST
-        NOT_PLAYERS_TURN
-    ]],
+    MOVE_ERRORS => {
+        prefix => "MOVE_ERROR_",
+        data   => <<"        --",
+            MOVE_ACCEPTED
+            FAILED_TO_PARSE
+            GAME_FINISHED
+            FIELD_DOES_NOT_EXIST
+            NOT_PLAYERS_TURN
+            MAX
+        --
+    },
 );
-foreach my $set (values %sets) {
-    for (my $i = 0; $i < @$set; $i ++) {
-        my $name = $$set [$i];
+while (my ($tag, $set) = each %sets) {
+    my $prefix = $$set {prefix} // "";
+    my @lines = split /\n/ => $$set {data};
+    for (my $i = 0; $i < @lines; $i ++) {
+        my ($name) = $lines [$i] =~ /(\S+)/;
         no strict 'refs';
-        ${__PACKAGE__ . "::${name}"} = $i + 1;
-        push @EXPORT => "\$${name}";
+        no warnings 'once';
+        ${__PACKAGE__ . "::${prefix}${name}"} = $i;
+        push @{$EXPORT_TAGS {$tag}} => "\$${prefix}${name}";
     }
 }
+
+our @EXPORT_OK = map {@$_} values %EXPORT_TAGS;
+$EXPORT_TAGS {ALL} = \@EXPORT_OK;   # Dumb exporter, not having ALL.
 
 
 1;
