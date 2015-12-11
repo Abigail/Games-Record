@@ -28,6 +28,8 @@ sub init {
 }
 
 
+# -----------------------------------------------------------------------------
+# check_finished
 #
 # Calculate whether a game is finished.
 #
