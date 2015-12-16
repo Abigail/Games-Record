@@ -106,6 +106,45 @@ sub _place {
 }
 
 
+# -----------------------------------------------------------------------------
+# _parse_move
+#
+# Parses a move. Returns false if it cannot parse the moves, a 
+# move in a generic format otherwise.
+#
+# Is often overriden in by a subclass.
+#
+# Generic allowed move formats:
+#     1) "LN"           # Drops piece on field LN
+#     2) "LN-LN(-LN)*   # Moves piece from LN to LN (to LN...)
+#     3) "LNxLN(xLN)*   # Moves piece from LN to LN (to LN...) capturing
+#                               enemy piece(s) in the process.
+#
+# "LN" is a field, following chess conventions: a letter followed by a number.
+#
+# Parameters:
+#      move:   Move to be played
+#
+sub _parse_move {
+    my ($self, %args) = @_;
+
+    my $move = $args {move} // die "Missing argument 'move'";
+
+    $move =~ s/^\s+//;
+    $move =~ s/\s+$//;
+    $move = lc $move;
+
+    if ($move =~ /^(?<file>[a-z])(?<rank>[1-9][0-9]*)$/) {
+        my $pos_x = ord ($+ {file}) - ord ('a');
+        my $pos_y =      $+ {rank}  - 1;
+        return [$MOVE_TYPE_DROP => [$pos_x => $pos_y]];
+    }
+    else {
+        return;
+    }
+}
+
+
 
 # -----------------------------------------------------------------------------
 # _is_valid_move
