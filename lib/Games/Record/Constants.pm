@@ -46,6 +46,19 @@ my %sets = (
             MAX
         --
     },
+
+    #
+    # Move types
+    #
+    MOVE_TYPES => {
+        prefix => "MOVE_TYPE_",
+        data   => <<"        --",
+            DROP
+            MOVE
+            TAKE
+            MAX
+        --
+    },
 );
 while (my ($tag, $set) = each %sets) {
     my $prefix = $$set {prefix} // "";
