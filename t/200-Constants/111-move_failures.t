@@ -19,6 +19,9 @@ is $MOVE_ERROR_FAILED_TO_PARSE,      $i ++, '$MOVE_ERROR_FAILED_TO_PARSE';
 is $MOVE_ERROR_GAME_FINISHED,        $i ++, '$MOVE_ERROR_GAME_FINISHED';
 is $MOVE_ERROR_FIELD_DOES_NOT_EXIST, $i ++, '$MOVE_ERROR_FIELD_DOES_NOT_EXIST';
 is $MOVE_ERROR_NOT_PLAYERS_TURN,     $i ++, '$MOVE_ERROR_NOT_PLAYERS_TURN';
+is $MOVE_ERROR_GAME_DOES_NOT_ALLOW_DROPS,
+                                     $i ++, '$MOVE_ERROR_GAME_DOES_NOT_' .
+                                                  'ALLOW_DROPS';
 is $MOVE_ERROR_MAX,                  $i ++, '$MOVE_ERROR_MAX';
 
 

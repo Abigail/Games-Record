@@ -43,6 +43,7 @@ my %sets = (
             GAME_FINISHED
             FIELD_DOES_NOT_EXIST
             NOT_PLAYERS_TURN
+            GAME_DOES_NOT_ALLOW_DROPS
             MAX
         --
     },
