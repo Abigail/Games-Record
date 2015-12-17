@@ -19,6 +19,7 @@ fieldhash my %nr_of_pieces;
 fieldhash my %game_finished;   # False when progress, reason when finished.
 fieldhash my %winner;          # Winner of the game (undef: game in progress,
                                #                     0: draw)
+fieldhash my %error;
 
 my $DEFAULT_NR_OF_PLAYERS  = 2;
 my $DEFAULT_CURRENT_PLAYER = 1;
@@ -137,7 +138,7 @@ sub _parse_move {
     if ($move =~ /^(?<file>[a-z])(?<rank>[1-9][0-9]*)$/) {
         my $pos_x = ord ($+ {file}) - ord ('a');
         my $pos_y =      $+ {rank}  - 1;
-        return [$MOVE_TYPE_DROP => [$pos_x => $pos_y]];
+        return [$MOVE_TYPE_DROP, [$pos_x => $pos_y]];
     }
     else {
         return;
@@ -152,18 +153,79 @@ sub _parse_move {
 # Tests whether a move is valid. Does not play the move. This is called
 # after parsing a move, so we assume the move is in a generic format.
 #
+# Returns true if the move is valid, false otherwise. In the latter
+# case, it'll set an error.
+#
 # Is often overriden in by a subclass.
 #
 sub _is_valid_move {
     my ($self, %args) = @_;
 
-    ...;
+    my $move = $args {move} // die "Missing argument 'move'";
+
+    $error {$self} = $MOVE_ERROR_MOVE_ACCEPTED;
+
+    if ($$move [0] == $MOVE_TYPE_DROP) {
+        unless ($self -> _allow_drops) {
+            $error {$self} = $MOVE_ERROR_GAME_DOES_NOT_ALLOW_DROPS;
+            return;
+        }
+        my $x = $$move [1] [0];
+        my $y = $$move [1] [1];
+        if ($x >= $self -> _x_size || $y >= $self -> _y_size) {
+            $error {$self} = $MOVE_ERROR_FIELD_DOES_NOT_EXIST;
+            return;
+        }
+        #
+        # Find the piece. If there's no piece, default to the default
+        # of the current player.
+        #
+        my $piece = $$move [2] ||
+                     $self -> _player_piece
+                              (player => $self -> _current_player);
+        #
+        # Can it be placed?
+        #
+        if ($self -> _piece (x => $x, y => $y)) {
+            $error {$self} = $MOVE_ERROR_FIELD_OCCUPIED;
+            return;
+        }
+        #
+        # If the field exists, and isn't occupied, it's a valid move.
+        #
+        return 1;
+    }
+    else {
+        #
+        # Other move types not implemented yet.
+        #
+        ...;
+    }
 }
 
 
 
 # -----------------------------------------------------------------------------
-# move
+# _player_piece
+#
+# Returns the piece belonging to a given player. The default it to return
+# the piece with the same index as the current player. This works for games
+# like Go, Tic-Tac-Toe, Nine Men's Morris, Halma and others where each player
+# only has one type of piece. Games for which this is not true, this method
+# may need to be overridden.
+#
+sub _player_piece {
+    my ($self, %args) = @_;
+
+    my $player = $args {player} // die "Must have a player argument";
+
+    $player;
+}
+
+
+
+# -----------------------------------------------------------------------------
+# 
 #
 # Plays a move. Returns true if the move can be played. Returns false if
 # a move cannot be played. If not, sets an error condition.
@@ -172,6 +234,17 @@ sub move {
     my ($self, %args) = @_;
 
     ...;
+}
+
+
+
+# -----------------------------------------------------------------------------
+# _allow_drops 
+#
+# Returns false. Games which allow drops should override this.
+#
+sub _allow_drops {
+    return 0;
 }
 
 
@@ -245,6 +318,16 @@ sub _current_player {
 sub _nr_of_pieces {
     my $self = shift;
     $nr_of_pieces {$self};
+}
+
+# -----------------------------------------------------------------------------
+# error
+# 
+# Returns the value of the last error set.
+#
+sub error {
+    my $self = shift;
+    $error {$self};
 }
 
 # -----------------------------------------------------------------------------
