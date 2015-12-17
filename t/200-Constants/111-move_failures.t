@@ -22,6 +22,7 @@ is $MOVE_ERROR_NOT_PLAYERS_TURN,     $i ++, '$MOVE_ERROR_NOT_PLAYERS_TURN';
 is $MOVE_ERROR_GAME_DOES_NOT_ALLOW_DROPS,
                                      $i ++, '$MOVE_ERROR_GAME_DOES_NOT_' .
                                                   'ALLOW_DROPS';
+is $MOVE_ERROR_FIELD_OCCUPIED,       $i ++, '$MOVE_ERROR_FIELD_OCCUPIED';
 is $MOVE_ERROR_MAX,                  $i ++, '$MOVE_ERROR_MAX';
 
 
