@@ -248,6 +248,38 @@ sub _allow_drops {
 }
 
 
+# -----------------------------------------------------------------------------
+# _may_drop_piece_on 
+#
+# Returns true if the given piece may be dropped on the given field.
+# This base method allows dropping on any empty field (and not on a 
+# non-occupied field). We may assume the given field exists in the 
+# current board.
+#
+# It should set the reason why the piece cannot be dropped.
+#
+# This method is a prime candidate to be subclassed.
+#
+# Parameters:
+#      piece:  The piece to be dropped. Irrelevant in this base case.
+#      x, y:   Coordinates of the field it will be placed on.
+#
+sub _may_drop_piece_on {
+    my ($self, %args) = @_;
+
+    my $piece = $args {piece};
+    my $x     = $args {x};
+    my $y     = $args {y};
+
+    if ($self -> _piece (x => $x, y => $y)) {
+        $self -> _set_error (error => $MOVE_ERROR_FIELD_OCCUPIED);
+        return;
+    }
+
+    return 1;
+}
+
+
 ################################################################################
 ################################################################################
 ##                                                                            ##
