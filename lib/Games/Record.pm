@@ -330,6 +330,21 @@ sub error {
     $error {$self};
 }
 
+
+# -----------------------------------------------------------------------------
+# _set_error
+# 
+# Set an error.
+#
+# Parameters:
+#    error:  Error to set.
+#
+sub _set_error {
+    my ($self, %args) = @_;
+    $error {$self} = $args {error};
+    $self;
+}
+
 # -----------------------------------------------------------------------------
 # _game_finished
 # 
