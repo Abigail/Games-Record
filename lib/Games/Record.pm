@@ -212,7 +212,7 @@ sub _is_valid_move {
                                                    y     => $y);
 
         #
-        # If the field exists, and isn't occupied, it's a valid move.
+        # If the field exists, and we may drop on it, it's valid.
         #
         return 1;
     }
