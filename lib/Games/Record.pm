@@ -254,7 +254,52 @@ sub _player_piece {
 sub move {
     my ($self, %args) = @_;
 
+    $self -> _set_error (error => $MOVE_ERROR_MOVE_ACCEPTED);
+
+    if ($self -> _game_finished) {
+        $self -> _set_error ($MOVE_ERROR_GAME_FINISHED);
+        return;
+    }
+
+
+    my $move = $args {move} // die "Need a 'move' parameter";
+
+    my $parsed_move = $self -> _parse_move (move => $move);
+    unless ($parsed_move) {
+        $self -> _set_error (error => $MOVE_ERROR_FAILED_TO_PARSE);
+        return;
+    }
+    return unless $self -> is_valid_move (move => $parsed_move);
+
+    #
+    # It has passed all the checks, so we now no longer have to validate.
+    #
+    if ($$move [0] == $MOVE_TYPE_DROP) {
+        my ($x, $y) = @{$$move [1]};
+        my $piece = $$move [2] //
+                     $self -> _player_piece
+                              (player => $self -> _current_player);
+        $self -> _place (piece => $piece,
+                         x     => $x,
+                         y     => $y);
+    }
+    else {
+        ...;
+    }
+
+    #
+    # Check whether we're finished. If finished, check_finished will
+    # set the winner (if there is a winner), and set why the game
+    # was finished.
+    #
+    return if $self -> check_finished;
+
+    #
+    # TODO: set next player
+    #       increment ply/turn counter
+    #
     ...;
+
 }
 
 
