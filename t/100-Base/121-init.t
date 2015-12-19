@@ -29,11 +29,9 @@ my $board_res;
 my $board_exp;
 
 $board_res = $record -> _board;
-$board_exp = [[0, 0, 0],
-              [0, 0, 0],
-              [0, 0, 0],
-              [0, 0, 0],
-              [0, 0, 0]];
+$board_exp = [[0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0]];
 is_deeply $board_res, $board_exp, "Created board";
 is $record -> _x_size, 3, "Board, X direction";
 is $record -> _y_size, 5, "Board, Y direction";

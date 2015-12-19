@@ -71,7 +71,7 @@ sub _create_board {
     my ($self, %args) = @_;
 
     my $board;
-    push @$board => [(0) x $args {x_size}] for 1 .. $args {y_size};
+    push @$board => [(0) x $args {y_size}] for 1 .. $args {x_size};
 
     $board {$self}  = $board;
     $x_size {$self} = $args {x_size};

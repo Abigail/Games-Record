@@ -35,13 +35,11 @@ is $record -> _y_size, 1, "Minimal board, Y direction";
 #
 $record -> _create_board (x_size => 5, y_size => 7);
 $board_res = $record -> _board;
-$board_exp = [[0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0]];
+$board_exp = [[0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0]];
 is_deeply $board_res, $board_exp, "Non-square board";
 is $record -> _x_size, 5, "Non-square board, X direction";
 is $record -> _y_size, 7, "Non-square board, Y direction";
