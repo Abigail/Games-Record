@@ -22,7 +22,7 @@ fieldhash my %winner;          # Winner of the game (undef: game in progress,
 fieldhash my %error;
 
 my $DEFAULT_NR_OF_PLAYERS  = 2;
-my $DEFAULT_CURRENT_PLAYER = 1;
+my $DEFAULT_CURRENT_PLAYER = 0;
 
 
 sub new  {bless \do {my $var} => shift};
@@ -405,6 +405,20 @@ sub _nr_of_players {
 sub _current_player {
     my $self = shift;
     $current_player {$self};
+}
+
+# -----------------------------------------------------------------------------
+# _inc_current_player
+# 
+# Pass play to the next player.
+#
+sub _inc_current_player {
+    my $self = shift;
+    $current_player {$self} ++;
+    if ($current_player {$self} == $nr_of_players {$self}) {
+        $current_player {$self} = 0;
+    }
+    $self;
 }
 
 # -----------------------------------------------------------------------------
