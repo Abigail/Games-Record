@@ -166,16 +166,35 @@ sub _is_valid_move {
     $error {$self} = $MOVE_ERROR_MOVE_ACCEPTED;
 
     if ($$move [0] == $MOVE_TYPE_DROP) {
+        #
+        # If the game doesn't allow drops, we're done.
+        #
         unless ($self -> _allow_drops) {
             $error {$self} = $MOVE_ERROR_GAME_DOES_NOT_ALLOW_DROPS;
             return;
         }
         my $x = $$move [1] [0];
         my $y = $$move [1] [1];
+
+        #
+        # Check for bounds.
+        #
         if ($x >= $self -> _x_size || $y >= $self -> _y_size) {
             $error {$self} = $MOVE_ERROR_FIELD_DOES_NOT_EXIST;
             return;
         }
+
+
+        #
+        # Make sure the target field exist -- the board may be irregular
+        # in shape.
+        #
+        unless (defined $self -> _piece (x => $x, y => $y)) {
+            $error {$self} = $MOVE_ERROR_FIELD_DOES_NOT_EXIST;
+            return;
+        }
+
+
         #
         # Find the piece. If there's no piece, default to the default
         # of the current player.
@@ -183,13 +202,15 @@ sub _is_valid_move {
         my $piece = $$move [2] ||
                      $self -> _player_piece
                               (player => $self -> _current_player);
+
         #
-        # Can it be placed?
+        # Can it be placed? This method should set the reason why
+        # the piece cannot be dropped.
         #
-        if ($self -> _piece (x => $x, y => $y)) {
-            $error {$self} = $MOVE_ERROR_FIELD_OCCUPIED;
-            return;
-        }
+        return unless $self -> _may_drop_piece_on (piece => $piece,
+                                                   x     => $x,
+                                                   y     => $y);
+
         #
         # If the field exists, and isn't occupied, it's a valid move.
         #
@@ -430,7 +451,6 @@ sub _piece {
 
     $board {$self} [$x] [$y];
 }
-
 
 
 # -----------------------------------------------------------------------------
